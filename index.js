@@ -5,22 +5,22 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // Routes
-import authRoutes from "../src/routes/auth.routes.js";
-import rolesRoutes from "../src/routes/roles.routes.js";
-import permissionsRoutes from "../src/routes/permissions.routes.js";
-import userPermissionsRoutes from "../src/routes/rolePermissions.routes.js";
-import usersRoutes from "../src/routes/users.routes.js";
-import projectsRoutes from "../src/routes/projects.routes.js";
-import projectMembersRoutes from "../src/routes/projectMembers.routes.js";
-import tasksRoutes from "../src/routes/tasks.routes.js";
-import taskCommentsRoutes from "../src/routes/taskComments.routes.js";
-import filesRoutes from "../src/routes/files.routes.js";
-import reportsRoutes from "../src/routes/reports.routes.js";
-import profileRoutes from "../src/routes/profile.routes.js";
-import activityLogsRoutes from "../src/routes/activityLogs.routes.js";
-import notificationRoutes from "../src/routes/notification.routes.js";
-import calendargRoutes from "../src/routes/calendar.routes.js";
-import mailRoutes from "../src/routes/mails.routes.js";
+import authRoutes from "./src/routes/auth.routes.js";
+import rolesRoutes from "./src/routes/roles.routes.js";
+import permissionsRoutes from "./src/routes/permissions.routes.js";
+import userPermissionsRoutes from "./src/routes/rolePermissions.routes.js";
+import usersRoutes from "./src/routes/users.routes.js";
+import projectsRoutes from "./src/routes/projects.routes.js";
+import projectMembersRoutes from "./src/routes/projectMembers.routes.js";
+import tasksRoutes from "./src/routes/tasks.routes.js";
+import taskCommentsRoutes from "./src/routes/taskComments.routes.js";
+import filesRoutes from "./src/routes/files.routes.js";
+import reportsRoutes from "./src/routes/reports.routes.js";
+import profileRoutes from "./src/routes/profile.routes.js";
+import activityLogsRoutes from "./src/routes/activityLogs.routes.js";
+import notificationRoutes from "./src/routes/notification.routes.js";
+import calendargRoutes from "./src/routes/calendar.routes.js";
+import mailRoutes from "./src/routes/mails.routes.js";
 
 dotenv.config();
 
