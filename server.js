@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { initSocket } from "./src/services/socket.service.js";
-import { scheduleProjectStartNotifications } from "./src/services/scheduler.service.js";
+// import { scheduleProjectStartNotifications } from "./src/services/scheduler.service.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import rolesRoutes from "./src/routes/roles.routes.js";
 import permissionsRoutes from "./src/routes/permissions.routes.js";
@@ -90,15 +90,16 @@ app.use("/api", calendargRoutes);
 app.use("/api/mails", mailRoutes);
 
 
+// Socket aur Server listen wala part hata kar sirf ye likhein:
 const PORT = process.env.PORT || 5000;
 
-const server = http.createServer(app);
-// initialize socket.io
-initSocket(server);
+// Local development ke liye ye condition laga dein
+if (process.env.NODE_ENV !== 'production') {
+    const server = http.createServer(app);
+    initSocket(server); // Local pe socket chale ga
+    server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+}
 
-// Initialize project start notification scheduler
-scheduleProjectStartNotifications();
+// Vercel ke liye export lazmi hai
+export default app;
 
-server.listen(PORT, async () => {
-  console.log(`API server listening on http://localhost:${PORT}`);
-});
