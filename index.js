@@ -3,8 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-
-// Routes
+import http from "http";
+import { initSocket } from "./src/services/socket.service.js";
+import { scheduleProjectStartNotifications } from "./src/services/scheduler.service.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import rolesRoutes from "./src/routes/roles.routes.js";
 import permissionsRoutes from "./src/routes/permissions.routes.js";
@@ -29,23 +30,24 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 1. Updated CORS: Frontend URL lazmi add karein jo Koyeb/Vercel ne di hai
 app.use(cors({
   origin: [
     "http://localhost:8080",
     "https://zenith-board-hub.lovable.app",
-    "https://orbit-grid-suite.lovable.app"
+    "https://orbit-grid-suite.lovable.app",
+    /\.koyeb\.app$/ // Ye Koyeb ke subdomains allow kar dega
   ],
   credentials: true
 }));
 
 app.use(express.json());
 
-// Static uploads
-app.use("/api/uploads", express.static(path.join(__dirname, "../src/uploads")));
+app.use("/api/src/uploads", express.static(path.join(__dirname, "src/uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "src/uploads")));
 
-// Health
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "ok", message: "Server is live!" });
 });
 
 // Routes
@@ -66,4 +68,15 @@ app.use("/api/activitylog", activityLogsRoutes);
 app.use("/api", calendargRoutes);
 app.use("/api/mails", mailRoutes);
 
-export default app;
+// 2. Updated PORT and Host for Cloud
+// Koyeb automatically PORT variable set karta hai
+const PORT = process.env.PORT || 8000; 
+
+const server = http.createServer(app);
+initSocket(server);
+scheduleProjectStartNotifications();
+
+// 3. 0.0.0.0 bind karna zaroori hai cloud ke liye
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`API server is live on port ${PORT}`);
+});
