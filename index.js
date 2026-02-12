@@ -36,7 +36,7 @@ app.use(cors({
     "http://localhost:8080",
     "https://zenith-board-hub.lovable.app",
     "https://orbit-grid-suite.lovable.app",
-    "https://project-managment-frontend-w5hm.vercel.app/",
+    "https://project-managment-frontend-w5hm.vercel.app",
     /\.koyeb\.app$/ // Ye Koyeb ke subdomains allow kar dega
   ],
   credentials: true
