@@ -23,35 +23,57 @@ import notificationRoutes from "./src/routes/notification.routes.js";
 import calendargRoutes from "./src/routes/calendar.routes.js";
 import mailRoutes from "./src/routes/mails.routes.js";
 
+
 dotenv.config();
 
 const app = express();
 
+// Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 1. Updated CORS: Frontend URL lazmi add karein jo Koyeb/Vercel ne di hai
 app.use(cors({
   origin: [
     "http://localhost:8080",
     "https://zenith-board-hub.lovable.app",
     "https://orbit-grid-suite.lovable.app",
-    "https://project-managment-frontend-w5hm.vercel.app",
-    /\.koyeb\.app$/ // Ye Koyeb ke subdomains allow kar dega
+    "https://project-managment-frontend-w5hm.vercel.app"
+
   ],
   credentials: true
 }));
 
 app.use(express.json());
 
-app.use("/api/src/uploads", express.static(path.join(__dirname, "src/uploads")));
-app.use("/api/uploads", express.static(path.join(__dirname, "src/uploads")));
+// OLD paths (tasks / projects – backward compatibility)
+app.use(
+  "/api/src/uploads",
+  express.static(path.join(__dirname, "src/uploads"))
+);
 
+// NEW paths (mails / future)
+app.use(
+  "/api/uploads",
+  express.static(path.join(__dirname, "src/uploads"))
+);
+
+
+// Health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Server is live!" });
+  res.json({ status: "ok" });
 });
 
-// Routes
+// Optional: DB check route
+app.get("/api/db-check", async (req, res) => {
+  try {
+    await testDbConnection();
+    res.json({ status: "ok", db: "connected" });
+  } catch {
+    res.status(500).json({ status: "error", db: "not-connected" });
+  }
+});
+
+// Auth routes
 app.use("/api/auth", authRoutes);
 app.use("/api/role", rolesRoutes);
 app.use("/api/permissioins", permissionsRoutes);
@@ -69,15 +91,16 @@ app.use("/api/activitylog", activityLogsRoutes);
 app.use("/api", calendargRoutes);
 app.use("/api/mails", mailRoutes);
 
-// 2. Updated PORT and Host for Cloud
-// Koyeb automatically PORT variable set karta hai
-const PORT = process.env.PORT || 8000; 
+
+const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
+// initialize socket.io
 initSocket(server);
+
+// Initialize project start notification scheduler
 scheduleProjectStartNotifications();
 
-// 3. 0.0.0.0 bind karna zaroori hai cloud ke liye
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`API server is live on port ${PORT}`);
+server.listen(PORT, async () => {
+  console.log(`API server listening on http://localhost:${PORT}`);
 });
